@@ -47,7 +47,7 @@ class AutoCoder {
 
     _img.loadPixels();
 
-    color bgCol   = getBackCol(_img, a);
+    color bgCol   = getBackCol(a);
     color lastCol = -1;
     int br = (bgCol >> 16) & 0xFF;
     int bg = (bgCol >> 8) & 0xFF;
@@ -153,22 +153,18 @@ class AutoCoder {
     }
   }
 
-  color getBackCol(PImage img, int a) {
-    PImage src = img.copy();
-    int w = src.width;
-    int h = src.height;
+  color getBackCol(int a) {
+    PImage src = _img.copy();
+    int w = PAG.cols * a;
+    int h = PAG.rows * a;
 
     HashMap<Integer, Integer> colors = new HashMap<Integer, Integer>();
 
     src.loadPixels();
-    float off = a*0.5;
 
     for (int j=0; j<h; j+=a) {
-      int y = round(j + off);
       for (int i=0; i<w; i+=a) {
-        int x = round(i + off);
-
-        color col = src.get(x, y);
+        color col = src.get(i, j);
 
         if (colors.containsKey( col )) {
           int count = colors.get( col );
