@@ -4,7 +4,8 @@ import java.util.Map;
 
 
 class AutoCoder {
-  String filePath = sketchPath("sketch\\sketch.pde");
+  String filePath = sketchPath("sketch");
+  String fileName = "sketch.pde";
   File       file;
   PImage     _img;
 
@@ -12,9 +13,12 @@ class AutoCoder {
   boolean bUseBackground = true;
 
   AutoCoder() {
-    println(filePath);
+    File path = new File(filePath);
+    if (!path.exists()) {
+      path.mkdirs();
+    }
 
-    file = new File(filePath);
+    file = new File(filePath + "\\" + fileName);
     try {
       if (!file.exists()) {
         file.createNewFile();
