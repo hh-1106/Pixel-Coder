@@ -25,7 +25,7 @@ class PixelArtGenerator {
   }
 
   void pixelate() {
-    if (_pg == null) return;
+    if (_img == null) return;
 
     int w = _img.width;
     int h = _img.height;

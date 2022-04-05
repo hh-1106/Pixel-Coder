@@ -2,8 +2,8 @@ final int PREV_PG_MAX_WIDTH  = 1000;
 final int PREV_PG_MAX_HEIGHT =  600;
 final int DROP_IMG_DELAY     =  500;
 
-PGraphics previewPG;
-PImage       srcImg;
+PGraphics   previewPG;
+PImage         srcImg;
 
 PixelArtGenerator PAG;
 UIManager         UIM;
