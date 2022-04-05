@@ -36,6 +36,8 @@ class UIManager {
       cp5.addToggle("use back").setGroup(g1)
         .setPosition(70, py)
         .setSize(50, 25)
+        .setValue(AC.bUseBackground)
+        .plugTo(this, "onToggleUseBack")
         .getCaptionLabel().align(CENTER, CENTER)
         ;
 
@@ -98,6 +100,10 @@ class UIManager {
   void onToggleStroke(boolean val) {
     PAG.bStroke = val;
     PAG.pixelate();
+  }
+
+  void onToggleUseBack(boolean val) {
+    AC.bUseBackground = val;
   }
 
   void renderPrevPG() {

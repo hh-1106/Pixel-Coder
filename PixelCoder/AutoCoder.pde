@@ -6,9 +6,10 @@ import java.util.Map;
 class AutoCoder {
   String filePath = sketchPath("sketch\\sketch.pde");
   File       file;
+  PImage     _img;
 
   int   pixelSize = 10;
-  PImage     _img;
+  boolean bUseBackground = true;
 
   AutoCoder() {
     println(filePath);
@@ -26,71 +27,76 @@ class AutoCoder {
 
   void generateCode(PImage img) {
     this._img = img;
-    generateCode( pixelSize );
+
+    if (bUseBackground) {
+      generateCodeUseBackground( pixelSize );
+    } else {
+      generateCode( pixelSize );
+    }
   }
 
-  //void generateCodeUseBackground(int a) {
-  //  if (_img == null) return;
+  void generateCodeUseBackground(int a) {
+    if (_img == null) return;
 
-  //  int w = PAG.cols * a;
-  //  int h = PAG.rows * a;
+    int w = PAG.cols * a;
+    int h = PAG.rows * a;
 
-  //  _img.loadPixels();
+    _img.loadPixels();
 
-  //  color bgCol   = getBackCol(_img, a);
-  //  color lastCol = -1;
-  //  int br = (bgCol >> 16) & 0xFF;
-  //  int bg = (bgCol >> 8) & 0xFF;
-  //  int bb = bgCol & 0xFF;
+    color bgCol   = getBackCol(_img, a);
+    color lastCol = -1;
+    int br = (bgCol >> 16) & 0xFF;
+    int bg = (bgCol >> 8) & 0xFF;
+    int bb = bgCol & 0xFF;
 
-  //  try {
-  //    FileWriter out = new FileWriter(file);
+    try {
+      FileWriter out = new FileWriter(file);
 
-  //    String setup = "void setup() {"
-  //      + String.format("\n  size(%d, %d);", w, h)
-  //      + String.format("\n  background(%d, %d, %d);", br, bg, bb)
-  //      + "\n  noStroke();"
-  //      + "\n"
-  //      ;
-  //    out.write( setup );
+      String setup = "void setup() {"
+        + String.format("\n  size(%d, %d);", w, h)
+        + String.format("\n  background(%d, %d, %d);", br, bg, bb)
+        + "\n  noStroke();"
+        + "\n"
+        ;
+      out.write( setup );
 
-  //    for (int j=0; j<h; j+=a) {
-  //      boolean skip = false;
-  //      for (int i=0; i<w; i+=a) {
-  //        color col = _img.get(i, j);
+      for (int j=0; j<h; j+=a) {
+        boolean skip = false;
+        for (int i=0; i<w; i+=a) {
+          color col = _img.get(i, j);
 
-  //        if ( col == bgCol ) {
-  //          continue;
-  //        } else {
-  //          skip = true;
-  //        }
+          if ( col == bgCol ) {
+            continue;
+          } else {
+            skip = true;
+          }
 
-  //        int r = (col >> 16) & 0xFF;
-  //        int g = (col >> 8) & 0xFF;
-  //        int b = col & 0xFF;
+          int r = (col >> 16) & 0xFF;
+          int g = (col >> 8) & 0xFF;
+          int b = col & 0xFF;
 
-  //        String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
-  //        String drawRect  = String.format("rect(%d, %d, %d, %d);", i, j, a, a);
+          String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
+          String drawRect  = String.format("rect(%d, %d, %d, %d);", i, j, a, a);
 
-  //        if ( lastCol != col ) {
-  //          out.write( "\n  " );
-  //          out.write( fillColor );
-  //        }
-  //        out.write( "\n  " );
-  //        out.write( drawRect );
+          if ( lastCol != col ) {
+            out.write( "\n  " );
+            out.write( fillColor );
+          }
+          out.write( "\n  " );
+          out.write( drawRect );
 
-  //        lastCol = col;
-  //      }
-  //      if (skip) out.write( "\n" );
-  //    }
+          lastCol = col;
+        }
+        if (skip) out.write( "\n" );
+      }
 
-  //    out.write( "\n}" );
-  //    out.close();
-  //  }
-  //  catch(Exception e) {
-  //    e.printStackTrace();
-  //  }
-  //}
+      out.write( "\n}" );
+      out.close();
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   void generateCode(int a) {
     if (_img == null) return;
