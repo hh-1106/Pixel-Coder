@@ -18,7 +18,7 @@ class UIManager {
 
     Group g1 = cp5.addGroup("settings");
     {
-      g1.setHeight(16).setSize(190, 210).setPosition(10, 30)
+      g1.setHeight(16).setSize(190, 200).setPosition(10, 30)
         .setBackgroundColor(color(38))
         .getCaptionLabel().align(CENTER, CENTER)
         ;
@@ -32,13 +32,13 @@ class UIManager {
         .getCaptionLabel().align(CENTER, CENTER)
         ;
 
-      cp5.addToggle("use for").setGroup(g1)
+      cp5.addToggle("use back").setGroup(g1)
         .setPosition(70, py)
         .setSize(50, 25)
         .getCaptionLabel().align(CENTER, CENTER)
         ;
 
-      cp5.addToggle("use back").setGroup(g1)
+      cp5.addToggle("use for").setGroup(g1)
         .setPosition(130, py)
         .setSize(50, 25)
         .getCaptionLabel().align(CENTER, CENTER)
@@ -46,7 +46,7 @@ class UIManager {
 
 
       cp5.addSlider("pixelate").setGroup(g1)
-        .setPosition(10, py+=50)
+        .setPosition(10, py+=45)
         .setSize(120, 14)
         .setRange(8, 128).setValue(PAG.scl)
         .plugTo(this, "onPixelateChange")
@@ -67,9 +67,9 @@ class UIManager {
 
 
       cp5.addButton("generate code").setGroup(g1)
-        .setSize(170, 30)
+        .setSize(170, 35)
         .setPosition(10, py+=40)
-        .setColorActive(color(20, 115, 230))
+        .setColorLabel(color(255, 154, 0))
         .plugTo(this, "onGenerateCodeButton");
     }
   }
@@ -86,5 +86,28 @@ class UIManager {
   void onToggleStroke(boolean val) {
     PAG.bStroke = val;
     PAG.pixelate();
+  }
+
+  void renderPrevPG() {
+
+
+    float prevW = PREV_PG_MAX_WIDTH;
+    float prevH = prevW * previewPG.height / (float)previewPG.width;
+    if (prevH > PREV_PG_MAX_HEIGHT) {
+      prevH = PREV_PG_MAX_HEIGHT;
+      prevW = prevH * previewPG.width / (float)previewPG.height;
+    }
+
+    push();
+    rectMode(CENTER);
+    translate(740, 360);
+    noFill();
+    stroke(38, 128, 235);
+    strokeWeight(5);
+    rect(0, 0, prevW, prevH);
+
+    image(previewPG, 0, 0, prevW, prevH);
+
+    pop();
   }
 }
