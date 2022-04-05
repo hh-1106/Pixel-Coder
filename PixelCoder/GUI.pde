@@ -4,6 +4,7 @@ class UIManager {
 
   ControlP5               cp5;
   Textlabel  labelColsAndRows;
+  Slider      pixelSizeSlider;
 
   UIManager(PApplet app) {
     cp5 = new ControlP5(app);
@@ -59,10 +60,11 @@ class UIManager {
         ;
 
 
-      cp5.addSlider("pixel size").setGroup(g1)
+      pixelSizeSlider = cp5.addSlider("pixel size").setGroup(g1)
         .setPosition(10, py+=30)
         .setSize(120, 14)
-        .setRange(5, 100)
+        .setRange(5, 100).setValue(AC.pixelSize)
+        .plugTo(this, "onPixelSizeChange")
         ;
 
 
@@ -76,11 +78,21 @@ class UIManager {
 
   void onPixelateChange(int val) {
     PAG.pixelate( previewPG, srcImg, val );
-
     labelColsAndRows.setValueLabel( PAG.getColsAndRows() );
   }
 
+  void onPixelSizeChange(int val) {
+    int maxSize = floor(MAX_GENERATE_WIDTH / (float)PAG.cols);
+    if (val > maxSize) {
+      val = maxSize;
+      pixelSizeSlider.setValue(val);
+    }
+
+    AC.pixelSize = val;
+  }
+
   void onGenerateCodeButton() {
+    AC.generateCode( srcImg );
   }
 
   void onToggleStroke(boolean val) {
@@ -89,8 +101,6 @@ class UIManager {
   }
 
   void renderPrevPG() {
-
-
     float prevW = PREV_PG_MAX_WIDTH;
     float prevH = prevW * previewPG.height / (float)previewPG.width;
     if (prevH > PREV_PG_MAX_HEIGHT) {
