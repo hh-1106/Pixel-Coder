@@ -2,7 +2,7 @@ class PixelArtGenerator {
 
   int cols = 10;
   int rows = 10;
-  int  scl = 20;
+  int  scl = 30;
 
   boolean bStroke = false;
 

@@ -9,7 +9,7 @@ class AutoCoder {
   File       file;
   PImage     _img;
 
-  int   pixelSize = 10;
+  int   pixelSize = 20;
   boolean bUseBackground = true;
   boolean bUseForLoop = true;
   boolean bFillR = true;
@@ -87,6 +87,15 @@ class AutoCoder {
 
           if ( col == bgCol ) {
             forStart = i+1;
+
+            if (PAG.bStroke) {
+              String fillColor = getFillColor(col);
+              out.write( "\n  " );
+              out.write( fillColor );
+              String drawRect  = String.format("rect(%d, %d, %d, %d);", x, y, a, a);
+              out.write( "\n  " );
+              out.write( drawRect );
+            }
             continue;
           } else skip = true;
 
@@ -116,7 +125,6 @@ class AutoCoder {
               out.write( "\n  " );
               out.write( drawRect );
             }
-
             forStart = i+1;
             bInForloop = false;
             forloopCode = "";

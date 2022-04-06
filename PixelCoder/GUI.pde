@@ -20,7 +20,7 @@ class UIManager {
 
     Group g1 = cp5.addGroup("settings");
     {
-      g1.setHeight(16).setSize(190, 250).setPosition(10, 30)
+      g1.setHeight(16).setSize(190, 240).setPosition(10, 30)
         .setBackgroundColor(color(38))
         .getCaptionLabel().align(CENTER, CENTER)
         ;
