@@ -4,7 +4,8 @@ class UIManager {
 
   ControlP5               cp5;
   Textlabel  labelColsAndRows;
-  Slider      pixelSizeSlider;
+  Slider      sliderPixelSize;
+  Toggle        toggleUseBack;
 
   UIManager(PApplet app) {
     cp5 = new ControlP5(app);
@@ -33,8 +34,8 @@ class UIManager {
         .getCaptionLabel().align(CENTER, CENTER)
         ;
 
-      cp5.addToggle("use back").setGroup(g1)
-        .setPosition(70, py)
+      toggleUseBack = cp5.addToggle("use back").setGroup(g1);
+      toggleUseBack.setPosition(70, py)
         .setSize(50, 25)
         .setValue(AC.bUseBackground)
         .plugTo(this, "onToggleUseBack")
@@ -44,6 +45,8 @@ class UIManager {
       cp5.addToggle("use for").setGroup(g1)
         .setPosition(130, py)
         .setSize(50, 25)
+        .setValue(AC.bUseForLoop)
+        .plugTo(this, "onToggleUseFor")
         .getCaptionLabel().align(CENTER, CENTER)
         ;
 
@@ -62,7 +65,7 @@ class UIManager {
         ;
 
 
-      pixelSizeSlider = cp5.addSlider("pixel size").setGroup(g1)
+      sliderPixelSize = cp5.addSlider("pixel size").setGroup(g1)
         .setPosition(10, py+=30)
         .setSize(120, 14)
         .setRange(5, 100).setValue(AC.pixelSize)
@@ -87,7 +90,7 @@ class UIManager {
     int maxSize = floor(MAX_GENERATE_WIDTH / (float)PAG.cols);
     if (val > maxSize) {
       val = maxSize;
-      pixelSizeSlider.setValue(val);
+      sliderPixelSize.setValue(val);
     }
 
     AC.pixelSize = val;
@@ -106,6 +109,15 @@ class UIManager {
     AC.bUseBackground = val;
   }
 
+  void onToggleUseFor(boolean val) {
+    AC.bUseForLoop = val;
+
+    if (val) {
+      toggleUseBack.setValue(true);
+      AC.bUseBackground = true;
+    }
+  }
+
   void renderPrevPG() {
     float prevW = PREV_PG_MAX_WIDTH;
     float prevH = prevW * previewPG.height / (float)previewPG.width;
@@ -119,7 +131,7 @@ class UIManager {
     translate(740, 360);
     noFill();
     stroke(38, 128, 235);
-    strokeWeight(5);
+    strokeWeight(4);
     rect(0, 0, prevW, prevH);
 
     image(previewPG, 0, 0, prevW, prevH);

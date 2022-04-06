@@ -3,13 +3,13 @@ final int PREV_PG_MAX_HEIGHT =  600;
 final int DROP_IMG_DELAY     =  500;
 final int MAX_GENERATE_WIDTH = 4096;
 
-PGraphics   previewPG;
-PImage         srcImg;
+PGraphics                 previewPG;
+PImage                       srcImg;
 
-PixelArtGenerator PAG;
-AutoCoder          AC;
-UIManager         UIM;
-SDrop            drop;
+PixelArtGenerator               PAG;
+AutoCoder                        AC;
+UIManager                       UIM;
+SDrop                          drop;
 
 void setup() {
   size(1280, 720);

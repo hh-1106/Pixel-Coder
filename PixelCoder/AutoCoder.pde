@@ -11,6 +11,7 @@ class AutoCoder {
 
   int   pixelSize = 10;
   boolean bUseBackground = true;
+  boolean bUseForLoop = true;
 
   AutoCoder() {
     File path = new File(filePath);
@@ -32,22 +33,22 @@ class AutoCoder {
   void generateCode(PImage img) {
     this._img = img;
 
-    if (bUseBackground) {
+    if (bUseForLoop) {
+      generateCodeUseForLoop( pixelSize );
+    } else if (bUseBackground) {
       generateCodeUseBackground( pixelSize );
     } else {
       generateCode( pixelSize );
     }
   }
 
-  void generateCodeUseBackground(int a) {
+  void generateCodeUseForLoop(int a) {
     if (_img == null) return;
 
     int w = PAG.cols * a;
     int h = PAG.rows * a;
-
     _img.loadPixels();
-
-    color bgCol   = getBackCol(a);
+    color bgCol   = getBackCol();
     color lastCol = -1;
     int br = (bgCol >> 16) & 0xFF;
     int bg = (bgCol >> 8) & 0xFF;
@@ -56,18 +57,21 @@ class AutoCoder {
     try {
       FileWriter out = new FileWriter(file);
 
+      String strokeLine = PAG.bStroke ?"" :"\n  noStroke();";
       String setup = "void setup() {"
         + String.format("\n  size(%d, %d);", w, h)
         + String.format("\n  background(%d, %d, %d);", br, bg, bb)
-        + "\n  noStroke();"
+        + strokeLine
         + "\n"
         ;
       out.write( setup );
 
-      for (int j=0; j<h; j+=a) {
+      for (int j=0; j<PAG.rows; j++) {
+        int y = j * a;
         boolean skip = false;
-        for (int i=0; i<w; i+=a) {
-          color col = _img.get(i, j);
+        for (int i=0; i<PAG.cols; i++) {
+          int x = i * a;
+          color col = _img.get(i*PAG.scl, j*PAG.scl);
 
           if ( col == bgCol ) {
             continue;
@@ -80,7 +84,74 @@ class AutoCoder {
           int b = col & 0xFF;
 
           String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
-          String drawRect  = String.format("rect(%d, %d, %d, %d);", i, j, a, a);
+          String drawRect  = String.format("rect(%d, %d, %d, %d);", x, y, a, a);
+
+          if ( lastCol != col ) {
+            out.write( "\n  " );
+            out.write( fillColor );
+          }
+          out.write( "\n  " );
+          out.write( drawRect );
+
+          lastCol = col;
+        }
+        if (skip) out.write( "\n" );
+      }
+
+      out.write( "\n}" );
+      out.close();
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  void generateCodeUseBackground(int a) {
+    if (_img == null) return;
+
+    int w = PAG.cols * a;
+    int h = PAG.rows * a;
+
+    _img.loadPixels();
+
+    color bgCol   = getBackCol();
+    color lastCol = -1;
+    int br = (bgCol >> 16) & 0xFF;
+    int bg = (bgCol >> 8) & 0xFF;
+    int bb = bgCol & 0xFF;
+
+    try {
+      FileWriter out = new FileWriter(file);
+
+      String strokeLine = PAG.bStroke ?"" :"\n  noStroke();";
+
+      String setup = "void setup() {"
+        + String.format("\n  size(%d, %d);", w, h)
+        + String.format("\n  background(%d, %d, %d);", br, bg, bb)
+        + strokeLine
+        + "\n"
+        ;
+      out.write( setup );
+
+      for (int j=0; j<PAG.rows; j++) {
+        int y = j * a;
+        boolean skip = false;
+        for (int i=0; i<PAG.cols; i++) {
+          int x = i * a;
+          color col = _img.get(i*PAG.scl, j*PAG.scl);
+
+          if ( col == bgCol ) {
+            continue;
+          } else {
+            skip = true;
+          }
+
+          int r = (col >> 16) & 0xFF;
+          int g = (col >> 8) & 0xFF;
+          int b = col & 0xFF;
+
+          String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
+          String drawRect  = String.format("rect(%d, %d, %d, %d);", x, y, a, a);
 
           if ( lastCol != col ) {
             out.write( "\n  " );
@@ -114,24 +185,28 @@ class AutoCoder {
     try {
       FileWriter out = new FileWriter(file);
 
+      String strokeLine = PAG.bStroke ?"" :"\n  noStroke();";
+
       String setup = "void setup() {"
         + String.format("\n  size(%d, %d);", w, h)
-        + "\n  noStroke();"
+        + strokeLine
         + "\n"
         ;
       out.write( setup );
 
-      for (int j=0; j<h; j+=a) {
+      for (int j=0; j<PAG.rows; j++) {
+        int y = j * a;
         boolean skip = false;
-        for (int i=0; i<w; i+=a) {
-          color col = _img.get(i, j);
+        for (int i=0; i<PAG.cols; i++) {
+          int x = i * a;
+          color col = _img.get(i*PAG.scl, j*PAG.scl);
 
           int r = (col >> 16) & 0xFF;
           int g = (col >> 8) & 0xFF;
           int b = col & 0xFF;
 
           String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
-          String drawRect  = String.format("rect(%d, %d, %d, %d);", i, j, a, a);
+          String drawRect  = String.format("rect(%d, %d, %d, %d);", x, y, a, a);
 
           if ( lastCol != col ) {
             out.write( "\n  " );
@@ -153,18 +228,16 @@ class AutoCoder {
     }
   }
 
-  color getBackCol(int a) {
+  color getBackCol() {
     PImage src = _img.copy();
-    int w = PAG.cols * a;
-    int h = PAG.rows * a;
 
     HashMap<Integer, Integer> colors = new HashMap<Integer, Integer>();
 
     src.loadPixels();
 
-    for (int j=0; j<h; j+=a) {
-      for (int i=0; i<w; i+=a) {
-        color col = src.get(i, j);
+    for (int j=0; j<PAG.rows; j++) {
+      for (int i=0; i<PAG.cols; i++) {
+        color col = src.get(i*PAG.scl, j*PAG.scl);
 
         if (colors.containsKey( col )) {
           int count = colors.get( col );
