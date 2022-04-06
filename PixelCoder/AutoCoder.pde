@@ -49,7 +49,6 @@ class AutoCoder {
     int h = PAG.rows * a;
     _img.loadPixels();
     color bgCol   = getBackCol();
-    color lastCol = -1;
     int br = (bgCol >> 16) & 0xFF;
     int bg = (bgCol >> 8) & 0xFF;
     int bb = bgCol & 0xFF;
@@ -69,33 +68,66 @@ class AutoCoder {
       for (int j=0; j<PAG.rows; j++) {
         int y = j * a;
         boolean skip = false;
+
+        int forStart = 0;
+        int forEnd   = 0;
+        boolean bInForloop = false;
+        String forloopCode = "";
+
+        color nextCol = _img.get(0, j*PAG.scl);
         for (int i=0; i<PAG.cols; i++) {
           int x = i * a;
-          color col = _img.get(i*PAG.scl, j*PAG.scl);
+          color col = nextCol;
+
+          if (i == PAG.cols-1)
+            nextCol = -1;
+          else
+            nextCol = _img.get((i+1)*PAG.scl, j*PAG.scl);
 
           if ( col == bgCol ) {
+            forStart = i+1;
             continue;
+          } else skip = true;
+
+          if ( nextCol == col ) {
+            forEnd = i;
+            bInForloop = true;
           } else {
-            skip = true;
-          }
-
-          int r = (col >> 16) & 0xFF;
-          int g = (col >> 8) & 0xFF;
-          int b = col & 0xFF;
-
-          String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
-          String drawRect  = String.format("rect(%d, %d, %d, %d);", x, y, a, a);
-
-          if ( lastCol != col ) {
+            int r = (col >> 16) & 0xFF;
+            int g = (col >> 8) & 0xFF;
+            int b = col & 0xFF;
+            String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
             out.write( "\n  " );
             out.write( fillColor );
-          }
-          out.write( "\n  " );
-          out.write( drawRect );
 
-          lastCol = col;
+            // for loop rects
+            if (bInForloop) {
+              forEnd = i+1;
+              forloopCode = String.format(
+                "for (int x = %d; x < %d; x += %d) {\n" +
+                "    rect(x, %d, %d, %d);\n" +
+                "  }"
+                , forStart*a, forEnd*a, a, y, a, a);
+
+              out.write( "\n  " );
+              out.write( forloopCode );
+            }
+            // single rect
+            else {
+              String drawRect  = String.format("rect(%d, %d, %d, %d);", x, y, a, a);
+              out.write( "\n  " );
+              out.write( drawRect );
+            }
+
+            forStart = i+1;
+            bInForloop = false;
+            forloopCode = "";
+          }
         }
-        if (skip) out.write( "\n" );
+
+        if (skip) {
+          out.write( "\n" );
+        }
       }
 
       out.write( "\n}" );
@@ -196,7 +228,6 @@ class AutoCoder {
 
       for (int j=0; j<PAG.rows; j++) {
         int y = j * a;
-        boolean skip = false;
         for (int i=0; i<PAG.cols; i++) {
           int x = i * a;
           color col = _img.get(i*PAG.scl, j*PAG.scl);
@@ -217,7 +248,6 @@ class AutoCoder {
 
           lastCol = col;
         }
-        if (skip) out.write( "\n" );
       }
 
       out.write( "\n}" );
