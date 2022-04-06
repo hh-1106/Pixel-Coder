@@ -12,6 +12,7 @@ class AutoCoder {
   int   pixelSize = 10;
   boolean bUseBackground = true;
   boolean bUseForLoop = true;
+  boolean bFillR = true;
 
   AutoCoder() {
     File path = new File(filePath);
@@ -93,10 +94,7 @@ class AutoCoder {
             forEnd = i;
             bInForloop = true;
           } else {
-            int r = (col >> 16) & 0xFF;
-            int g = (col >> 8) & 0xFF;
-            int b = col & 0xFF;
-            String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
+            String fillColor = getFillColor(col);
             out.write( "\n  " );
             out.write( fillColor );
 
@@ -178,11 +176,7 @@ class AutoCoder {
             skip = true;
           }
 
-          int r = (col >> 16) & 0xFF;
-          int g = (col >> 8) & 0xFF;
-          int b = col & 0xFF;
-
-          String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
+          String fillColor = getFillColor(col);
           String drawRect  = String.format("rect(%d, %d, %d, %d);", x, y, a, a);
 
           if ( lastCol != col ) {
@@ -232,11 +226,7 @@ class AutoCoder {
           int x = i * a;
           color col = _img.get(i*PAG.scl, j*PAG.scl);
 
-          int r = (col >> 16) & 0xFF;
-          int g = (col >> 8) & 0xFF;
-          int b = col & 0xFF;
-
-          String fillColor = String.format("fill(%d, %d, %d);", r, g, b);
+          String fillColor = getFillColor(col);
           String drawRect  = String.format("rect(%d, %d, %d, %d);", x, y, a, a);
 
           if ( lastCol != col ) {
@@ -297,5 +287,18 @@ class AutoCoder {
     int b = bcol & 0xFF;
 
     return color(r, g, b);
+  }
+
+  String getFillColor(color col) {
+    int r = (col >> 16) & 0xFF;
+    int g = (col >> 8) & 0xFF;
+    int b = col & 0xFF;
+    String fillColor = "";
+
+    if (bFillR && r==g && r==b)
+      fillColor = String.format("fill(%d);", r);
+    else
+      fillColor = String.format("fill(%d, %d, %d);", r, g, b);
+    return fillColor;
   }
 }

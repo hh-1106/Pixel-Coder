@@ -20,7 +20,7 @@ class UIManager {
 
     Group g1 = cp5.addGroup("settings");
     {
-      g1.setHeight(16).setSize(190, 200).setPosition(10, 30)
+      g1.setHeight(16).setSize(190, 250).setPosition(10, 30)
         .setBackgroundColor(color(38))
         .getCaptionLabel().align(CENTER, CENTER)
         ;
@@ -29,22 +29,30 @@ class UIManager {
 
       cp5.addToggle("stroke").setGroup(g1)
         .setPosition(10, py+=10)
-        .setSize(50, 25)
+        .setSize(75, 25)
         .plugTo(this, "onToggleStroke")
         .getCaptionLabel().align(CENTER, CENTER)
         ;
 
+      cp5.addToggle("fill r").setGroup(g1)
+        .setPosition(105, py)
+        .setSize(75, 25)
+        .setValue(AC.bFillR)
+        .plugTo(this, "onToggleFillR")
+        .getCaptionLabel().align(CENTER, CENTER)
+        ;
+
       toggleUseBack = cp5.addToggle("use back").setGroup(g1);
-      toggleUseBack.setPosition(70, py)
-        .setSize(50, 25)
+      toggleUseBack.setPosition(10, py+=35)
+        .setSize(75, 25)
         .setValue(AC.bUseBackground)
         .plugTo(this, "onToggleUseBack")
         .getCaptionLabel().align(CENTER, CENTER)
         ;
 
       cp5.addToggle("use for").setGroup(g1)
-        .setPosition(130, py)
-        .setSize(50, 25)
+        .setPosition(105, py)
+        .setSize(75, 25)
         .setValue(AC.bUseForLoop)
         .plugTo(this, "onToggleUseFor")
         .getCaptionLabel().align(CENTER, CENTER)
@@ -107,6 +115,9 @@ class UIManager {
 
   void onToggleUseBack(boolean val) {
     AC.bUseBackground = val;
+
+    // TODO:
+    // useBack should not be off while useFor on
   }
 
   void onToggleUseFor(boolean val) {
@@ -116,6 +127,10 @@ class UIManager {
       toggleUseBack.setValue(true);
       AC.bUseBackground = true;
     }
+  }
+
+  void onToggleFillR(boolean val) {
+    AC.bFillR = val;
   }
 
   void renderPrevPG() {
@@ -131,10 +146,10 @@ class UIManager {
     translate(740, 360);
     noFill();
     stroke(38, 128, 235);
-    strokeWeight(4);
-    rect(0, 0, prevW, prevH);
+    strokeWeight(3);
 
     image(previewPG, 0, 0, prevW, prevH);
+    rect(0, 0, prevW+2, prevH+2);
 
     pop();
   }
