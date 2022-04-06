@@ -62,7 +62,7 @@ class UIManager {
       cp5.addSlider("pixelate").setGroup(g1)
         .setPosition(10, py+=45)
         .setSize(120, 14)
-        .setRange(8, 128).setValue(PAG.scl)
+        .setRange(4, 128).setValue(PAG.scl)
         .plugTo(this, "onPixelateChange")
         ;
 
