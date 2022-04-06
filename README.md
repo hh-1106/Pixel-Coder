@@ -1,7 +1,7 @@
 # Pixel-Coder
 这是一个自动生成代码的软件. 生成的processing代码可以绘制像素画.
 
-![](https://github.com/homeless-honey/Pixel-Coder/doc/img.png)
+![](https://github.com/homeless-honey/Pixel-Coder/blob/main/doc/img.png)
 
 ## 安装
 ### Windows 
