@@ -15,7 +15,7 @@
 - 用 processing 打开 PixelCoder/PixelCoder.pde 运行或打包
 
 ## 使用
-[b站教程](https://www.bilibili.com/video/BV1kY41177/)
+[b站教程](https://www.bilibili.com/video/BV1kY41177qf)
 
 ## 问题
 ### 图片撕裂、黑屏
