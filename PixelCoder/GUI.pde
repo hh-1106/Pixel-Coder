@@ -1,6 +1,6 @@
 import controlP5.*;
 
-class UIManager {
+public class UIManager {
 
   ControlP5               cp5;
   Textlabel  labelColsAndRows;
@@ -18,9 +18,9 @@ class UIManager {
       , color(255)          // vl
       ));
 
-    Group g1 = cp5.addGroup("settings");
+    Group g1 = cp5.addGroup("preferences");
     {
-      g1.setHeight(16).setSize(190, 240).setPosition(10, 30)
+      g1.setHeight(16).setSize(190, 285).setPosition(10, 30)
         .setBackgroundColor(color(38))
         .getCaptionLabel().align(CENTER, CENTER)
         ;
@@ -86,6 +86,12 @@ class UIManager {
         .setPosition(10, py+=40)
         .setColorLabel(color(255, 154, 0))
         .plugTo(this, "onGenerateCodeButton");
+
+      cp5.addButton("export png").setGroup(g1)
+        .setSize(170, 35)
+        .setPosition(10, py+=50)
+        .setColorLabel(color(38, 128, 235))
+        .plugTo(this, "onExportPNGButton");
     }
   }
 
@@ -106,6 +112,19 @@ class UIManager {
 
   void onGenerateCodeButton() {
     AC.generateCode( srcImg );
+  }
+
+  void onExportPNGButton() {
+    selectOutput("Please Input the filename:", "fileSelected", null, this);
+  }
+
+  public void fileSelected(File selection) {
+    if (selection == null) {
+      println("Window was closed or the user hit cancel.");
+    } else {
+      String filename = selection.getAbsolutePath() + ".png";
+      previewPG.save(filename);
+    }
   }
 
   void onToggleStroke(boolean val) {
