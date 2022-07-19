@@ -9,7 +9,7 @@
 - 解压到非中文路径下
 
 ### Mac
-- 安装 [Processing](https://processing.org/download) 3.x / 4.x
+- 安装 [Processing](https://processing.org/download) 3.x / ~~4.x~~
 - clone 本仓库
 - 安装 processing 库 [controlp5](https://github.com/sojamo/controlp5) [drop](https://github.com/transfluxus/drop)
 - 用 processing 打开 PixelCoder/PixelCoder.pde 运行或打包
